@@ -1,8 +1,9 @@
 #include <stdio.h>
+#include <string.h>
 
 char board[3][3];
 
-// Initialize the board with positions 1–9
+// Original logic below (unchanged functions)
 void initBoard() {
     char val = '1';
     for (int i = 0; i < 3; i++)
@@ -10,7 +11,6 @@ void initBoard() {
             board[i][j] = val++;
 }
 
-// Print the board
 void printBoard() {
     printf("\n");
     for (int i = 0; i < 3; i++) {
@@ -24,7 +24,6 @@ void printBoard() {
     printf("\n");
 }
 
-// Check win
 int checkWin(char mark) {
     for (int i = 0; i < 3; i++) {
         if ((board[i][0] == mark && board[i][1] == mark && board[i][2] == mark) ||
@@ -37,7 +36,6 @@ int checkWin(char mark) {
     return 0;
 }
 
-// Check draw
 int isFull() {
     for (int i = 0; i < 3; i++)
         for (int j = 0; j < 3; j++)
@@ -46,26 +44,39 @@ int isFull() {
     return 1;
 }
 
-// Clear input buffer
 void clearInput() {
     while (getchar() != '\n');
 }
 
-// Main function
+// New main with features around original game logic
 int main() {
     int pos, row, col;
     char player = 'X';
+    char player1[20], player2[20];
+
+    printf("Enter name for Player 1 (X): ");
+    fgets(player1, sizeof(player1), stdin);
+    player1[strcspn(player1, "\n")] = 0; // remove newline
+
+    printf("Enter name for Player 2 (O): ");
+    fgets(player2, sizeof(player2), stdin);
+    player2[strcspn(player2, "\n")] = 0;
 
     initBoard();
 
     while (1) {
         printBoard();
-        printf("Player %c, enter position (1-9): ", player);
+        printf("%s (%c), enter position (1-9 or 0 to quit): ", (player == 'X') ? player1 : player2, player);
 
         if (scanf("%d", &pos) != 1) {
-            printf("Invalid input! Please enter a number.\n");
+            printf("Invalid input. Try again.\n");
             clearInput();
             continue;
+        }
+
+        if (pos == 0) {
+            printf("Game exited. 👋\n");
+            break;
         }
 
         if (pos < 1 || pos > 9) {
@@ -85,7 +96,7 @@ int main() {
 
         if (checkWin(player)) {
             printBoard();
-            printf("🎉 Player %c wins!\n", player);
+            printf("🎉 %s (%c) wins!\n", (player == 'X') ? player1 : player2, player);
             break;
         }
 
